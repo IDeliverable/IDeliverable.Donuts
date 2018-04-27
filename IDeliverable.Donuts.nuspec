@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>IDeliverable.Donuts</id>
+    <version>1.0.6</version>
+    <authors>IDeliverable Ltd.</authors>
+    <owners>IDeliverable Ltd.</owners>
+    <licenseUrl>https://github.com/IDeliverable/IDeliverable.Donuts/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/IDeliverable/IDeliverable.Donuts</projectUrl>
+    <iconUrl>http://storage.ideliverable.com/media/Default/Products/IDeliverable.Donuts-Logo-256.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <summary>A module for the Orchard CMS that adds support for donut caching and donut hole caching to improve website performance.</summary>
+    <description>IDeliverable.Donuts is a module for the Orchard CMS that can dramatically improve the performance of websites by using different caching strategies for different sections of the rendered page. Serve the overall page from output cache while excluding specific individualized sections (i.e. donut caching), cache only specific expensive sections without caching the surrounding page (i.e. donut hole caching), or cache both but with different durations or other cache control parameters. Cache control can be configured on the content type and/or content item levels, and per display type (e.g. summary vs. detail) using easy to use configuration tools. Works in tandem with Orchard's built-in output cache functionality.</description>
+    <tags>IDeliverable Donuts Donut Hole Caching Orchard CMS Module</tags>
+  </metadata>
+</package>

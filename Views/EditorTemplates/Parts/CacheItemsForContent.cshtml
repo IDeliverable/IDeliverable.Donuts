@@ -1,0 +1,57 @@
+﻿@using Orchard.Localization.Services
+@using Orchard.Utility.Extensions;
+@using IDeliverable.Donuts.ViewModels
+
+@model CacheItemsForContentViewModel
+
+@{
+    var dateTimeFormatProvider = WorkContext.Resolve<IDateTimeFormatProvider>();
+}
+
+<fieldset>
+    <legend>
+        @T("Item-Level Cache Entries ")
+    </legend>
+    @if (Model.CacheItems.Any())
+    {
+        <table class="items">
+            <thead>
+                <tr>
+                    <th scope="col">@T("Cache Key")</th>
+                    <th scope="col">@T("Cached")</th>
+                    <th scope="col">@T("Valid Until")</th>
+                    <th scope="col">@T("Stored Until")</th>
+                    <th scope="col">
+                        @if (Model.UserCanEvict)
+                        {
+                            @Html.ActionLink(T("Evict All").ToString(), "EvictByTag", new { Area = "IDeliverable.Donuts", Controller = "CacheItems", tag = Model.Tag, returnUrl = Request.ToUrlString() }, new { @class = "button primaryAction", itemprop = "UnsafeUrl" })
+                        }
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var cacheItem in Model.CacheItems)
+            {
+                <tr>
+                    <td>@cacheItem.CacheKey</td>
+                    <td>@Display.DateTimeRelative(DateTimeUtc: cacheItem.CachedOnUtc)</td>
+                    <td>@Display.DateTime(DateTimeUtc: cacheItem.ValidUntilUtc, CustomFormat: T("{0} {1}", dateTimeFormatProvider.ShortDateFormat, dateTimeFormatProvider.LongTimeFormat))</td>
+                    <td>@Display.DateTime(DateTimeUtc: cacheItem.StoredUntilUtc, CustomFormat: T("{0} {1}", dateTimeFormatProvider.ShortDateFormat, dateTimeFormatProvider.LongTimeFormat))</td>
+                    <td>
+                        @Html.ActionLink(T("View").Text, "View", new { Area = "IDeliverable.Donuts", Controller = "CacheItems", cacheKey = cacheItem.CacheKey })
+                        @if (Model.UserCanEvict)
+                        {
+                            <text> | </text>
+                            @Html.ActionLink(T("Evict").Text, "EvictByKey", new { Area = "IDeliverable.Donuts", Controller = "CacheItems", cacheKey = cacheItem.CacheKey, returnUrl = Request.ToUrlString() })
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>
+            @T("There are no item-level cached entries for this content item.")
+        </p>
+    }
+</fieldset>

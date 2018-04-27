@@ -1,0 +1,4 @@
+﻿<Placement>
+    <Place Parts_ItemLevelCacheSettings_Edit="Content:After"/>
+    <Place Parts_ItemLevelCache_CacheItemsForContent="Content:After:After"/>
+</Placement>

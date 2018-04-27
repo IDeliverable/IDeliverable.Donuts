@@ -1,0 +1,6 @@
+[
+    {
+        "inputs": [ "Assets/TypeScript/ItemLevelCacheSettings.ts" ],
+        "output": "Scripts/itemLevelCacheSettings.js"
+    }
+]

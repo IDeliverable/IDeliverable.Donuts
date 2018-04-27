@@ -1,0 +1,169 @@
+﻿@using IDeliverable.Donuts.Models
+@using IDeliverable.Donuts.Models.Enums
+
+@model ItemLevelCachePart
+
+@{
+    Script.Require("ItemLevelCacheSettings");
+
+    using (Script.Head())
+    {
+        <style>
+            .inline-hint {
+                display: inline;
+                padding-left: 5px;
+            }
+        </style>
+    }
+
+    var contentTypeDisplayName = Model.ContentItem.TypeDefinition.DisplayName;
+}
+
+<fieldset>
+
+    <legend>
+        @T("Item-Level Cache Settings")
+    </legend>
+
+    <div id="local-navigation">
+        <ul class="itemlevelcache-displaytypes localmenu group">
+            @{
+                int i = 0;
+                string cssClass;
+
+                foreach (var settings in Model.ItemLevelCacheSettings)
+                {
+                    if (i == 0)
+                    {
+                        cssClass = "first";
+                    }
+                    else if (i == Model.ItemLevelCacheSettings.Count - 1)
+                    {
+                        cssClass = "last";
+                    }
+                    else
+                    {
+                        cssClass = "middle";
+                    }
+
+                    <li class="@cssClass"><a href="#cat-@settings.Key">@settings.Key</a></li>
+
+                    i++;
+                }
+            }
+        </ul>
+    </div>
+    <div id="content">
+        @foreach (var key in Model.ItemLevelCacheSettings.Select(kvp=>kvp.Key))
+        {
+            <fieldset id="cat-@key" class="itemlevelcache-displaytype-settings">
+                <fieldset>
+                    @Html.CheckBoxFor(m => m.ItemLevelCacheSettings[key].InheritDefaultSettings, new { @class = "inherit-checkbox" })
+                    @Html.LabelFor(m => m.ItemLevelCacheSettings[key].InheritDefaultSettings, T("Inherit Cache Settings from Content Type").Text, new { @class = "forcheckbox" })
+                </fieldset>
+                <fieldset>
+                    @Html.LabelFor(m => m.ItemLevelCacheSettings[key].Mode, T("When this {0} is rendered", contentTypeDisplayName))
+
+                    <input type="radio" @(Model.ItemLevelCacheSettings[key].Mode == ItemLevelCacheMode.DoNothing ? "checked" : null)
+                           name="@Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode)"
+                           id="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode))_donothing"
+                           class="itemlevelcache-mode-picker"
+                           value="@ItemLevelCacheMode.DoNothing.ToString()"
+                           data-for-display-type="@key"
+                           data-default-checked="@(Model.ContentTypeCacheSettings[key].Mode == ItemLevelCacheMode.DoNothing)" />
+                    <label for="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode))_donothing" class="forcheckbox">                        
+                        @T("Do nothing")
+                        <span class="inline-hint hint">@T("Let page-level output cache handle caching of content item.", contentTypeDisplayName)</span>
+                    </label>
+                    <br />
+
+                    <input type="radio" @(Model.ItemLevelCacheSettings[key].Mode == ItemLevelCacheMode.CacheItem ? "checked" : null)
+                           name="@Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode)"
+                           id="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode))_cacheitem"
+                           class="itemlevelcache-mode-picker"
+                           value="@ItemLevelCacheMode.CacheItem.ToString()"
+                           data-for-display-type="@key"
+                           data-default-checked="@(Model.ContentTypeCacheSettings[key].Mode == ItemLevelCacheMode.CacheItem)"  />
+                    <label for="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode))_cacheitem" class="forcheckbox">
+                        @T("Cache item")
+                        <span class="inline-hint hint">@T("The {0} will be output cached separately from page-level cache.", contentTypeDisplayName)</span>
+                    </label>
+                    <br />
+
+                    <input type="radio" @(Model.ItemLevelCacheSettings[key].Mode == ItemLevelCacheMode.ExcludeFromPageCache ? "checked" : null)
+                           name="@Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode)"
+                           id="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode))_exclude"
+                           class="itemlevelcache-mode-picker"
+                           value="@ItemLevelCacheMode.ExcludeFromPageCache.ToString()"
+                           data-for-display-type="@key"
+                           data-default-checked="@(Model.ContentTypeCacheSettings[key].Mode == ItemLevelCacheMode.ExcludeFromPageCache)"  />
+                    <label for="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].Mode))_exclude" class="forcheckbox">
+                        @T("Exclude from page cache")
+                        <span class="inline-hint hint">@T("Generate the {0} on every request, even if the rest of the page is served from the output cache.", contentTypeDisplayName)</span>
+                    </label>
+                </fieldset>
+                <fieldset class="display-on-cacheitem-@key">
+                    @Html.LabelFor(m => m.ItemLevelCacheSettings[key].InvalidationAction, T("When this {0} is changed", contentTypeDisplayName))
+
+                    <input type="radio" @(Model.ItemLevelCacheSettings[key].InvalidationAction == ItemLevelCacheInvalidationAction.DoNothing ? "checked" : null)
+                           name="@Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction)"
+                           id="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction))_donothing"
+                           class="on-change-mode-picker"
+                           value="@ItemLevelCacheInvalidationAction.DoNothing.ToString()"
+                           data-for-display-type="@key"
+                           data-default-checked="@(Model.ContentTypeCacheSettings[key].InvalidationAction == ItemLevelCacheInvalidationAction.DoNothing)"  />
+                    <label for="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction))_donothing" class="forcheckbox">
+                        @T("Do nothing")
+                        <span class="inline-hint hint">@T("Cached items will not be removed from the cache.")</span>
+                    </label>
+                    <br />
+
+                    <input type="radio" @(Model.ItemLevelCacheSettings[key].InvalidationAction == ItemLevelCacheInvalidationAction.Evict ? "checked" : null)
+                           name="@Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction)"
+                           id="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction))_evict"
+                           class="on-change-mode-picker"
+                           value="@ItemLevelCacheInvalidationAction.Evict.ToString()"
+                           data-for-display-type="@key"
+                           data-default-checked="@(Model.ContentTypeCacheSettings[key].InvalidationAction == ItemLevelCacheInvalidationAction.Evict)"  />
+                    <label for="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction))_evict" class="forcheckbox">@T("Evict from cache")</label>
+                    <br />
+
+                    <input type="radio" @(Model.ItemLevelCacheSettings[key].InvalidationAction == ItemLevelCacheInvalidationAction.PreRender ? "checked" : null)
+                           name="@Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction)"
+                           id="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction))_prerender"
+                           class="on-change-mode-picker"
+                           value="@ItemLevelCacheInvalidationAction.PreRender.ToString()"
+                           data-for-display-type="@key"
+                           data-default-checked="@(Model.ContentTypeCacheSettings[key].InvalidationAction == ItemLevelCacheInvalidationAction.PreRender)"  />
+                    <label for="@(Html.NameFor(m => m.ItemLevelCacheSettings[key].InvalidationAction))_prerender" class="forcheckbox">
+                        @T("Pre-render new version")
+                        <span class="inline-hint hint">@T("Immediately regenerate the new version in the background and replace old version in the cache.")</span>
+                    </label>
+                </fieldset>
+                <fieldset class="display-on-cacheitem-@key">
+                    @Html.LabelFor(m => m.ItemLevelCacheSettings[key].CacheDurationSeconds, T("Cache Duration"))
+                    @Html.TextBoxFor(m => m.ItemLevelCacheSettings[key].CacheDurationSeconds, new { @class = "text small", data_default_value = Model.ContentTypeCacheSettings[key].CacheDurationSeconds })
+                    <span class="hint">@T("Number of seconds that items should be cached on the server before being regenerated.")</span>
+                </fieldset>
+                <fieldset class="display-on-cacheitem-@key">
+                    @Html.LabelFor(m => Model.ItemLevelCacheSettings[key].CacheGraceTimeSeconds, T("Cache Grace Time"))
+                    @Html.TextBoxFor(m => Model.ItemLevelCacheSettings[key].CacheGraceTimeSeconds, new { @class = "text small", data_default_value = Model.ContentTypeCacheSettings[key].CacheGraceTimeSeconds })
+                    <span class="hint">@T("Number of seconds past duration that stale items can be served from cache while regeneration is in progress. Enter 0 to disable grace time.")</span>
+                </fieldset>
+                <div class="hide-on-prerender-@key">
+                    <fieldset class="display-on-cacheitem-@key">
+                        <legend>@T("Vary By:")</legend>
+                        @foreach (var compositeCacheKeyProvider in Model.CompositeCacheKeyProviders)
+                        {
+                            <fieldset>
+                                @Html.CheckBoxFor(m => m.ItemLevelCacheSettings[key].CompositeCacheKeyProviders[compositeCacheKeyProvider.TechnicalName], new { data_default_checked = Model.ContentTypeCacheSettings[key].CompositeCacheKeyProviders[compositeCacheKeyProvider.TechnicalName] })
+                                @Html.LabelFor(m => m.ItemLevelCacheSettings[key].CompositeCacheKeyProviders[compositeCacheKeyProvider.TechnicalName], T(compositeCacheKeyProvider.Name).Text, new { @class = "forcheckbox" })
+                                <span class="hint">@T(compositeCacheKeyProvider.HintText)</span>
+                            </fieldset>
+                        }
+                    </fieldset>
+                </div>
+            </fieldset>
+        }
+    </div>
+</fieldset>

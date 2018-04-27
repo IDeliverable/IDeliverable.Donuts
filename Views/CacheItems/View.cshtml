@@ -1,0 +1,188 @@
+﻿@using Orchard.Localization.Services
+@model IDeliverable.Donuts.Models.ItemLevelCacheHit
+    
+@{
+    Layout.Title = T("Item Level Cache Item");
+
+    using (Script.Head())
+    {
+        <style>
+            pre {
+                    margin-bottom: 1em;
+                    padding: 20px;
+                    max-height: 600px;
+                    overflow: auto;
+                    font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
+                    background-color: #eff0f1;
+            }
+        </style>
+    }
+
+    var dateTimeFormatProvider = WorkContext.Resolve<IDateTimeFormatProvider>();
+}
+
+@if (Model != null && Model.CacheItem != null && Model.ItemLevelCacheItem != null)
+{
+    <fieldset>
+        <legend>
+            @T("Cached Markup")
+        </legend>
+        <pre>@Model.ItemLevelCacheItem.Markup</pre>
+    </fieldset>
+
+    @*<fieldset>
+        <legend>
+            @T("Head Scripts")
+        </legend>
+        @T.Plural("There are no head scripts.", "There is 1 head script:", "There are {0} head scripts:", Model.ItemLevelCacheItem.HeadScripts.Count, Model.ItemLevelCacheItem.HeadScripts.Count)
+
+        @foreach (var script in Model.ItemLevelCacheItem.HeadScripts)
+        {
+            <pre>@script</pre>
+            <br/>
+        }
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            @T("Foot Scripts")
+        </legend>
+        @T.Plural("There are no foot scripts.", "There is 1 foot script:", "There are {0} foot scripts:", Model.ItemLevelCacheItem.FootScripts.Count, Model.ItemLevelCacheItem.FootScripts.Count)
+
+        @foreach (var script in Model.ItemLevelCacheItem.FootScripts)
+        {
+            <pre>@script</pre>
+            <br/>
+        }
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            @T("Included Resources")
+        </legend>
+        @T.Plural("There are no included resources.", "There is 1 included resource:", "There are {0} included resources:", Model.ItemLevelCacheItem.IncludedResources.Count, Model.ItemLevelCacheItem.IncludedResources.Count)
+
+        @if (Model.ItemLevelCacheItem.IncludedResources.Any())
+        {
+            <table class="items">
+                <thead>
+                <tr>
+                    <th>
+                        @T("Resource Type")
+                    </th>
+                    <th>
+                        @T("Path")
+                    </th>
+                    <th>
+                        @T("Debug Path")
+                    </th>
+                    <th>
+                        @T("Relative From Path")
+                    </th>
+                </tr>
+                </thead>
+                @foreach (var resource in Model.ItemLevelCacheItem.IncludedResources)
+                {
+                    <tr>
+                        <td>
+                            @resource.ResourceType
+                        </td>
+                        <td>
+                            @resource.ResourcePath
+                        </td>
+                        <td>
+                            @resource.ResourceDebugPath
+                        </td>
+                        <td>
+                            @resource.RelativeFromPath
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            @T("Required Resources")
+        </legend>
+        @T.Plural("There are no required resources.", "There is 1 required resource:", "There are {0} required resources:", Model.ItemLevelCacheItem.RequiredResources.Count, Model.ItemLevelCacheItem.RequiredResources.Count)
+
+        @if (Model.ItemLevelCacheItem.RequiredResources.Any())
+        {
+            <table class="items">
+                <thead>
+                <tr>
+                    <th>
+                        @T("Resource Type")
+                    </th>
+                    <th>
+                        @T("Resource Name")
+                    </th>
+                </tr>
+                </thead>
+                @foreach (var resource in Model.ItemLevelCacheItem.RequiredResources)
+                {
+                    <tr>
+                        <td>
+                            @resource.ResourceType
+                        </td>
+                        <td>
+                            @resource.ResourceName
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    </fieldset>*@
+
+    <fieldset>
+        <legend>@T("Meta Data")</legend>
+        <table class="items">
+            <tr>
+                <th>
+                    @T("Cache Key")
+                </th>
+                <td>
+                    @Model.CacheItem.CacheKey
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @T("Cached On")
+                </th>
+                <td>
+                    @Display.DateTime(DateTimeUtc: Model.CacheItem.CachedOnUtc, CustomFormat: T("{0} {1}", dateTimeFormatProvider.ShortDateFormat, dateTimeFormatProvider.LongTimeFormat))
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @T("Valid Until")
+                </th>
+                <td>
+                    @Display.DateTime(DateTimeUtc: Model.CacheItem.ValidUntilUtc, CustomFormat: T("{0} {1}", dateTimeFormatProvider.ShortDateFormat, dateTimeFormatProvider.LongTimeFormat))
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @T("Stored Until")
+                </th>
+                <td>
+                    @Display.DateTime(DateTimeUtc: Model.CacheItem.StoredUntilUtc, CustomFormat: T("{0} {1}", dateTimeFormatProvider.ShortDateFormat, dateTimeFormatProvider.LongTimeFormat))
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @T("Tags")
+                </th>
+                <td>
+                    @String.Join(", ", Model.CacheItem.Tags)
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+}
+else
+{
+    @T("There is no item with this cache key; it may have expired.")
+}

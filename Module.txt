@@ -1,0 +1,15 @@
+﻿Name: IDeliverable.Donuts
+AntiForgery: enabled
+Author: IDeliverable, Ltd.
+Website: https://github.com/IDeliverable/IDeliverable.Donuts
+Version: 1.0.6
+OrchardVersion: 1.10
+Status: Delivered
+Path: Donuts
+Description: Provides support for item-level output caching (e.g. donut caching and donut hole caching).
+Features:
+    IDeliverable.Donuts:
+        Name: Donuts for Content Items
+        Description: Enables support for item-level output caching (e.g. donut caching and donut hole caching).
+        Category: Performance
+        Dependencies: Orchard.OutputCache
